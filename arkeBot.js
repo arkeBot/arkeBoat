@@ -8,7 +8,6 @@
 (function () {
 
     var kill = function () {
-        clearInterval(basicBot.room.autodisableInterval);
         clearInterval(basicBot.room.afkInterval);
         basicBot.status = false;
     };
@@ -179,7 +178,7 @@
             botName: "arkeBot",
             language: "english",
             chatLink: "https://rawgit.com/Yemasthui/basicBot/master/lang/en.json",
-            maximumAfk: 120,
+            maximumAfk: 1200000,
             afkRemoval: false,
             maximumDc: 60,
             bouncerPlus: true,
@@ -237,13 +236,6 @@
             afkInterval: null,
             autoskip: false,
             autoskipTimer: null,
-            autodisableInterval: null,
-            autodisableFunc: function () {
-                if (basicBot.status && basicBot.settings.autodisable) {
-                    API.sendChat('!afkdisable');
-                    API.sendChat('!joindisable');
-                }
-            },
             queueing: 0,
             queueable: true,
             currentDJID: null,
@@ -958,10 +950,6 @@
                     API.sendChat(subChat(basicBot.chat.adfly, {name: chat.un}));
                     return true;
                 }
-                if (msg.indexOf('autojoin was not enabled') > 0 || msg.indexOf('AFK message was not enabled') > 0 || msg.indexOf('!afkdisable') > 0 || msg.indexOf('!joindisable') > 0 || msg.indexOf('autojoin disabled') > 0 || msg.indexOf('AFK message disabled') > 0) {
-                    API.moderateDeleteChat(chat.cid);
-                    return true;
-                }
 
                 var rlJoinChat = basicBot.chat.roulettejoin;
                 var rlLeaveChat = basicBot.chat.rouletteleave;
@@ -1160,9 +1148,6 @@
             basicBot.room.afkInterval = setInterval(function () {
                 basicBot.roomUtilities.afkCheck()
             }, 10 * 1000);
-            basicBot.room.autodisableInterval = setInterval(function () {
-                basicBot.room.autodisableFunc();
-            }, 60 * 60 * 1000);
             basicBot.loggedInID = API.getUser().id;
             basicBot.status = true;
             API.sendChat('/cap 1');
